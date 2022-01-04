@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { Suspense, useState, useEffect } from "react";
+
+import * as Y from "yjs";
+
+import { bindProxyAndYMap } from "valtio-yjs";
+
+import { WebrtcProvider } from "y-webrtc";
+
+import { proxy, subscribe, useSnapshot } from "valtio";
+
+const ydoc = new Y.Doc();
+const provider = new WebrtcProvider("test", ydoc);
+const ymap = ydoc.getMap("map");
+
+const avatarStore = proxy({});
+bindProxyAndYMap(chatStore, ymap);
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  provider.on("peers", (e) => setNewPeer(console.log(e)));
+
+  const snap = useSnapshot(chatStore);
+  // const otherUsers = Object.keys({ ...snap }).filter(
+  //   (user) => user != username
+  // );
+
+  return <div>connected</div>;
 }
 
 export default App;
